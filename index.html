@@ -33,8 +33,9 @@
         }
       } catch (err) {
         console.error('エラー:', err);
-        document.body.innerHTML = '<p>エラーが発生しました。コンソールを確認してください。</p>';
-      }
+        // 画面にエラー内容を表示（JSON文字列化してみる）
+        document.body.innerHTML = '<p>エラーが発生しました：' + JSON.stringify(err) + '</p>';
+        }
     }
 
     // ページ読み込み時に実行
