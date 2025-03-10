@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Stripe Payment with LIFF</title>
+  <!-- LIFF SDKの読み込み -->
+  <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+</head>
+<body>
+  <h1>100円課金で決済</h1>
+  <button id="payButton">100円を支払う</button>
+  
+  <script>
+    // LIFF初期化とユーザーID取得の関数
+    async function main() {
+      try {
+        // LIFFの初期化
+        await liff.init({ liffId: 'YOUR_LIFF_ID' });
+        // ユーザープロフィールを取得
+        const profile = await liff.getProfile();
+        const lineUserId = profile.userId;
+        console.log("取得したユーザーID:", lineUserId);
+
+        // ボタンがクリックされたときに決済セッションを作成するAPIを呼び出す
+        document.getElementById('payButton').addEventListener('click', async () => {
+          try {
+            const response = await fetch('https://your-api-endpoint/create-checkout-session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ line_user_id: lineUserId })
+            });
+            const data = await response.json();
+            if (data.checkoutUrl) {
+              // Stripeの決済ページへリダイレクト
+              window.location.href = data.checkoutUrl;
+            } else {
+              console.error('Checkout URLが返ってきませんでした');
+            }
+          } catch (error) {
+            console.error('決済セッションの作成に失敗:', error);
+          }
+        });
+      } catch (error) {
+        console.error('LIFF初期化またはユーザー情報の取得に失敗:', error);
+      }
+    }
+    
+    main();
+  </script>
+</body>
+</html>
