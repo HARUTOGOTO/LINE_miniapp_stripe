@@ -6,13 +6,24 @@
   <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
 </head>
 <body>
-  <p>読み込み中です…</p>
+  <p>頑張って読み込んでるから、もう少し待ってね！</p>
   <script>
     async function main() {
     try {
         console.log('LIFF init 開始');
         await liff.init({ liffId: '2007034467-z13l7loG' });
         console.log('LIFF init 完了');
+
+        // URLパラメータを確認
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+
+        if (status === 'success') {
+        // 決済成功で戻ってきた時に実行
+        console.log('決済完了！LIFFを閉じます');
+        liff.closeWindow(); // これでLINEのトーク画面へ戻る
+        return;
+        }
 
         const profile = await liff.getProfile();
         console.log('プロフィール取得:', profile);
